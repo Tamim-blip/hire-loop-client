@@ -6,18 +6,34 @@ const client = new MongoClient(process.env.BETTER_AUTH_DB_URI as string);
 const db = client.db("hire-loop-app");
 
 export const auth = betterAuth({
-      emailAndPassword: { 
-    enabled: true, 
-  }, 
-
-  
-    socialProviders: {
-        google: { 
-            clientId: process.env.GOOGLE_CLIENT_ID as string, 
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
-        }, 
+    emailAndPassword: {
+        enabled: true,
     },
-  database: mongodbAdapter(db, {
-    client,
-  }),
+
+    user: {
+        additionalFields: {
+            role: {
+                type: "string",
+                required: false,
+                defaultValue: "user",
+                input: true,
+                transform: {
+                    input: (value) =>
+                        value === "recruiter" || value === "admin"
+                            ? value
+                            : "user",
+                },
+            },
+        },
+    },
+
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        },
+    },
+    database: mongodbAdapter(db, {
+        client,
+    }),
 });

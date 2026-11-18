@@ -6,11 +6,14 @@ import {
   Input,
   InputGroup,
   Label,
+  ListBox,
+  Select,
   TextField,
   ToggleButton,
 } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +23,7 @@ import {
   AuthTabs,
   GoogleButton,
 } from "@/components/auth/auth-shared";
+import { signIn, signUp } from "@/lib/auth-client";
 
 /** Shared dark-field styling, tuned to the HireLoop purple accent. */
 const fieldClassName =
@@ -33,27 +37,52 @@ const labelClassName = "text-sm font-medium text-white/80";
 const hintClassName = "text-xs leading-relaxed text-white/40";
 const errorClassName = "px-1 text-xs text-red-400";
 
+const selectTriggerClassName =
+  "h-11 w-full rounded-xl border-white/10 bg-white/5 px-3.5 text-base text-white transition-colors hover:border-white/20 hover:bg-white/[0.07] focus-visible:border-[#5c53fe] [--focus:#5c53fe66]";
+
+const ROLES = [
+  { value: "user", label: "Job Seeker" },
+  { value: "recruiter", label: "Recruiter" },
+  { value: "admin", label: "Admin" },
+] as const;
+
+type Role = (typeof ROLES)[number]["value"];
+
 /**
- * Sign-up form: full name, role selection, email + confirm password with
- * client validation and a loading state. Only collects form data — auth
- * integration comes later.
+ * Sign-up form: name, email, role and password with client-side validation.
+ * Creates the account with Better Auth, including the selected role.
  */
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState<Role>("user");
+  const router = useRouter();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const userData = Object.fromEntries(formData.entries());
 
-    console.log(userData);
+    const { data, error } = await signUp.email({
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      role,
+    });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      router.push("/");
+    }
   }
 
-  // TODO: wire up better-auth social provider, e.g.:
-  // await authClient.signIn.social({ provider: "google" })
-  function handleGoogle() {
-    console.info("google sign-up clicked");
+  async function handleGoogle() {
+    await signIn.social({
+      provider: "google",
+    });
   }
 
   return (
@@ -114,6 +143,37 @@ export function SignUpForm() {
           />
           <FieldError className={errorClassName} />
         </TextField>
+
+        {/* Role */}
+        <Select
+          className={fieldWrapperClassName}
+          selectedKey={role}
+          onSelectionChange={(key) => key && setRole(key as Role)}
+        >
+          <Label className={labelClassName}>Role</Label>
+          <Select.Trigger className={selectTriggerClassName}>
+            <Select.Value />
+            <Select.Indicator className="size-4 text-white/40" />
+          </Select.Trigger>
+          <Select.Popover className="min-w-[var(--trigger-width)] rounded-xl border border-white/10 bg-[#0b0b12] p-1 shadow-2xl">
+            <ListBox>
+              {ROLES.map((option) => (
+                <ListBox.Item
+                  key={option.value}
+                  id={option.value}
+                  textValue={option.label}
+                  className="rounded-lg px-2.5 py-2 text-sm text-white/80 outline-none data-[focused=true]:bg-white/10 data-[focused=true]:text-white data-[selected=true]:text-white"
+                >
+                  {option.label}
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
+          <Description className={hintClassName}>
+            Choose how you want to use HireLoop.
+          </Description>
+          <FieldError className={errorClassName} />
+        </Select>
 
         {/* Password */}
         <TextField

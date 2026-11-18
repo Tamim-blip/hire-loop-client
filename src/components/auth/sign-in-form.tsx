@@ -20,6 +20,8 @@ import {
   AuthTabs,
   GoogleButton,
 } from "@/components/auth/auth-shared";
+import { redirect } from "next/navigation";
+import { signIn, signUp } from "@/lib/auth-client";
 
 /** Shared dark-field styling, tuned to the HireLoop purple accent. */
 const fieldClassName =
@@ -40,17 +42,34 @@ const errorClassName = "px-1 text-xs text-red-400";
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
     const userData = Object.fromEntries(formData.entries());
 
     console.log(userData);
+
+
+     const {data, error} = await signIn.email({
+          email : userData.email as string,
+          password : userData.password as string,
+         
+        })
+    
+        if (data) {
+          redirect('/')
+        }
+    
+        if(error){
+          console.log(error)
+        }
   }
 
-  function handleGoogle() {
-    console.info("Google sign-in clicked");
+  async function handleGoogle() {
+    await signIn.social({
+      provider : "google"
+    })
   }
 
   return (
