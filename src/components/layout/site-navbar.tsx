@@ -144,7 +144,7 @@ export function SiteNavbar({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="mx-auto flex border rounded-full  h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto bg-purple-500/30 flex border rounded-full  h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
         <DesktopNav />
         <div className="md:hidden">
