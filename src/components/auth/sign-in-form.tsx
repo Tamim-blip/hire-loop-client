@@ -11,6 +11,7 @@ import {
 } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +21,8 @@ import {
   AuthTabs,
   GoogleButton,
 } from "@/components/auth/auth-shared";
-import { redirect } from "next/navigation";
-import { signIn, signUp } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 /** Shared dark-field styling, tuned to the HireLoop purple accent. */
 const fieldClassName =
@@ -41,35 +42,46 @@ const errorClassName = "px-1 text-xs text-red-400";
  */
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
- async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const userData = Object.fromEntries(formData.entries());
 
-    console.log(userData);
+    const { data, error } = await signIn.email({
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
 
+    if (error) {
+      toastError(
+        "Sign in failed",
+        error.message ?? "Please check your details and try again."
+      );
+      return;
+    }
 
-     const {data, error} = await signIn.email({
-          email : userData.email as string,
-          password : userData.password as string,
-         
-        })
-    
-        if (data) {
-          redirect('/')
-        }
-    
-        if(error){
-          console.log(error)
-        }
+    if (data) {
+      toastSuccess("Signed in successfully", "Welcome back to HireLoop.");
+      router.push("/");
+    }
   }
 
   async function handleGoogle() {
-    await signIn.social({
-      provider : "google"
-    })
+    const { error } = await signIn.social({
+      provider: "google",
+    });
+
+    if (error) {
+      toastError(
+        "Google sign-in failed",
+        error.message ?? "Please try again in a moment."
+      );
+      return;
+    }
+
+    toastSuccess("Redirecting to Google", "Complete sign-in to continue.");
   }
 
   return (

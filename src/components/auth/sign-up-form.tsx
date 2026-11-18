@@ -24,6 +24,7 @@ import {
   GoogleButton,
 } from "@/components/auth/auth-shared";
 import { signIn, signUp } from "@/lib/auth-client";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 /** Shared dark-field styling, tuned to the HireLoop purple accent. */
 const fieldClassName =
@@ -70,19 +71,33 @@ export function SignUpForm() {
     });
 
     if (error) {
-      console.error(error);
+      toastError(
+        "Sign up failed",
+        error.message ?? "Please check your details and try again."
+      );
       return;
     }
 
     if (data) {
+      toastSuccess("Account created", "Welcome to HireLoop!");
       router.push("/");
     }
   }
 
   async function handleGoogle() {
-    await signIn.social({
+    const { error } = await signIn.social({
       provider: "google",
     });
+
+    if (error) {
+      toastError(
+        "Google sign-up failed",
+        error.message ?? "Please try again in a moment."
+      );
+      return;
+    }
+
+    toastSuccess("Redirecting to Google", "Complete sign-up to continue.");
   }
 
   return (
