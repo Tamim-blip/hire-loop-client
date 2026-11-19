@@ -33,11 +33,7 @@ import { cn } from "cn";
 import { signOut, useSession } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
 
-const NAV_LINKS = [
-  { label: "Browse Jobs", href: "/jobs" },
-  { label: "Company", href: "/company" },
-  { label: "Pricing", href: "/pricing" },
-] as const;
+
 
 function getInitials(name?: string | null) {
   return (
@@ -75,6 +71,16 @@ function Logo() {
 function DesktopNav() {
   const { data: session } = useSession();
   const user = session?.user;
+
+
+  const NAV_LINKS = [
+  { label: "Browse Jobs", href: "/jobs" },
+  { label: "Company", href: "/company" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Dashboard", href: `/dashboard/${user?.role}` },
+] as const;
+
+
   const initials = getInitials(user?.name);
 
   const HandleSignOut = () => {
@@ -188,6 +194,13 @@ function DesktopNav() {
 function MobileNav() {
   const { data: session } = useSession();
   const user = session?.user;
+
+
+  const NAV_LINKS = [
+  { label: "Browse Jobs", href: "/jobs" },
+  { label: "Company", href: "/company" },
+  { label: "Pricing", href: "/pricing" },
+] as const;
 
   const initials = getInitials(user?.name);
 

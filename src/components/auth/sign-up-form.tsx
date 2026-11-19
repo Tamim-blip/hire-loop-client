@@ -42,7 +42,7 @@ const selectTriggerClassName =
   "h-11 w-full rounded-xl border-white/10 bg-white/5 px-3.5 text-base text-white transition-colors hover:border-white/20 hover:bg-white/[0.07] focus-visible:border-[#5c53fe] [--focus:#5c53fe66]";
 
 const ROLES = [
-  { value: "user", label: "Job Seeker" },
+  { value: "seeker", label: "Job Seeker" },
   { value: "recruiter", label: "Recruiter" },
   { value: "admin", label: "Admin" },
 ] as const;
@@ -55,7 +55,7 @@ type Role = (typeof ROLES)[number]["value"];
  */
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<Role>("user");
+  const [role, setRole] = useState<Role>("seeker");
   const router = useRouter();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {

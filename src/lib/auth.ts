@@ -15,13 +15,15 @@ export const auth = betterAuth({
             role: {
                 type: "string",
                 required: false,
-                defaultValue: "user",
+                defaultValue: "seeker",
                 input: true,
                 transform: {
                     input: (value) =>
-                        value === "recruiter" || value === "admin"
+                        value === "recruiter" ||
+                        value === "admin" ||
+                        value === "seeker"
                             ? value
-                            : "user",
+                            : "seeker",
                 },
             },
         },
