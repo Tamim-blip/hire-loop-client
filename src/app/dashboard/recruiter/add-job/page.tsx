@@ -30,6 +30,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { toastSuccess } from "@/lib/toast";
+import postJob from "@/lib/action/jobs";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"] as const;
 type JobType = (typeof JOB_TYPES)[number];
@@ -47,7 +48,7 @@ const JOB_CATEGORIES = [
 
 const SALARY_FREQUENCIES = ["per hour", "per month", "per year"];
 
-type JobFormData = {
+export type JobFormData = {
   title: string;
   company: string;
   category: string;
@@ -69,7 +70,7 @@ export default function PostJob() {
   const [jobType, setJobType] = useState<JobType>("Full-time");
   const [isRemote, setIsRemote] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -91,12 +92,16 @@ export default function PostJob() {
       requirements: value("requirements"),
     };
 
-    console.log("Job form data:", job);
-    toastSuccess("Job published", `${job.title} has been submitted.`);
+    const result = await postJob(job) 
 
-    form.reset();
-    setJobType("Full-time");
-    setIsRemote(false);
+    console.log(result)
+
+    // console.log("Job form data:", job);
+    // toastSuccess("Job published", `${job.title} has been submitted.`);
+
+    // form.reset();
+    // setJobType("Full-time");
+    // setIsRemote(false);
   }
 
   return (
@@ -378,3 +383,6 @@ export default function PostJob() {
     </div>
   );
 }
+
+
+
