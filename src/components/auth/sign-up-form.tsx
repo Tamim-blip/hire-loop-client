@@ -80,6 +80,7 @@ export function SignUpForm() {
 
     if (data) {
       toastSuccess("Account created", "Welcome to HireLoop!");
+      router.refresh()
       router.push("/");
     }
   }
