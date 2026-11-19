@@ -29,39 +29,15 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { toastSuccess } from "@/lib/toast";
+import {
+  JOB_CATEGORIES,
+  JOB_TYPES,
+  SALARY_FREQUENCIES,
+  type JobFormData,
+  type JobType,
+  type SalaryFrequency,
+} from "@/lib/job";
 import postJob from "@/lib/action/jobs";
-
-const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"] as const;
-type JobType = (typeof JOB_TYPES)[number];
-
-const JOB_CATEGORIES = [
-  "Engineering & Tech",
-  "Design",
-  "Marketing",
-  "Sales",
-  "Customer Support",
-  "Finance",
-  "Operations",
-  "Other",
-];
-
-const SALARY_FREQUENCIES = ["per hour", "per month", "per year"];
-
-export type JobFormData = {
-  title: string;
-  company: string;
-  category: string;
-  jobType: JobType;
-  isRemote: boolean;
-  location: string;
-  deadline: string;
-  minSalary: string;
-  maxSalary: string;
-  frequency: string;
-  responsibilities: string;
-  requirements: string;
-};
 
 const inputClassName = "h-10";
 const selectTriggerClassName = "h-10 w-full";
@@ -87,7 +63,7 @@ export default function PostJob() {
       deadline: value("deadline"),
       minSalary: value("minSalary"),
       maxSalary: value("maxSalary"),
-      frequency: value("frequency"),
+      frequency: value("frequency") as SalaryFrequency,
       responsibilities: value("responsibilities"),
       requirements: value("requirements"),
     };

@@ -1,19 +1,21 @@
-import { JobFormData } from "@/app/dashboard/recruiter/add-job/page"
+"use server"
 
-
+import type { JobFormData } from "@/lib/job"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-export default async function postJob (data : JobFormData ){
-
+export default async function postJob(data: JobFormData) {
     const res = await fetch(`${BASE_URL}/jobs`, {
-        method : "POST",
-        headers : {
-            "Content-Type" : "application/json"
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
         },
-        body : JSON.stringify(data)
+        body: JSON.stringify(data),
     })
 
-    return res.json()
+    if (!res.ok) {
+        throw new Error("Failed to publish job")
+    }
 
+    return res.json()
 }
