@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getData } from "@/lib/api/jobs";
+import { getJobs } from "@/lib/api/jobs";
 import {
   type JobStatus,
   type ManagedJob,
@@ -113,7 +113,7 @@ export default function ManageJobs() {
 }
 
 async function JobsContent() {
-  const apiJobs = await getData();
+  const apiJobs = await getJobs();
 
   const jobs: ManagedJob[] = apiJobs.map((job) => ({
     ...job,
