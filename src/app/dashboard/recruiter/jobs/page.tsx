@@ -5,11 +5,8 @@ import {
   Briefcase,
   Building2,
   ChevronRight,
-  Eye,
   MapPin,
-  Pencil,
   Plus,
-  Trash2,
   Users,
 } from "lucide-react";
 
@@ -26,10 +23,11 @@ import {
 } from "@/components/ui/table";
 import { getData } from "@/lib/api/jobs";
 import { type JobFormData, type SalaryFrequency } from "@/lib/job";
+import { JobActions } from "./_component/manageJobAction";
 
 type JobStatus = "Active" | "Expired";
 
-type ManagedJob = JobFormData & {
+export type ManagedJob = JobFormData & {
   id: string;
   applicants: number;
   status: JobStatus;
@@ -75,37 +73,7 @@ function StatusBadge({ status }: { status: JobStatus }) {
   );
 }
 
-function JobActions({ job }: { job: ManagedJob }) {
-  return (
-    <div className="flex flex-wrap items-center justify-end gap-1">
-      <Button variant="outline" size="sm" type="button">
-        <Pencil className="size-3.5" />
-        Update
-      </Button>
 
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        type="button"
-        title="View applicants"
-        aria-label={`View applicants for ${job.title}`}
-      >
-        <Eye />
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        type="button"
-        title="Delete job"
-        aria-label={`Delete ${job.title}`}
-        className="text-destructive hover:text-destructive"
-      >
-        <Trash2 />
-      </Button>
-    </div>
-  );
-}
 
 function JobsLoading() {
   return <Skeleton className="mt-8 h-72 w-full rounded-xl" />;

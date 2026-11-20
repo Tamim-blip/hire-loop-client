@@ -31,7 +31,8 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "cn";
 import { signOut, useSession } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { toastError, toastSuccess } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 
 
 
@@ -69,6 +70,7 @@ function Logo() {
 }
 
 function DesktopNav() {
+  const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
 
@@ -83,9 +85,24 @@ function DesktopNav() {
 
   const initials = getInitials(user?.name);
 
-  const HandleSignOut = () => {
-    signOut()
-    redirect('/')
+  const HandleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+
+      if (error) {
+        toastError(
+          "Sign out failed",
+          error.message ?? "Please try again in a moment."
+        );
+        return;
+      }
+
+      toastSuccess("Signed out", "You have been logged out successfully.");
+      router.push("/");
+      router.refresh();
+    } catch {
+      toastError("Sign out failed", "Please try again in a moment.");
+    }
   }
 
   return (
@@ -192,6 +209,7 @@ function DesktopNav() {
 }
 
 function MobileNav() {
+  const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
 
@@ -204,9 +222,24 @@ function MobileNav() {
 
   const initials = getInitials(user?.name);
 
-  const HandleSignOut = () => {
-    signOut()
-    redirect('/')
+  const HandleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+
+      if (error) {
+        toastError(
+          "Sign out failed",
+          error.message ?? "Please try again in a moment."
+        );
+        return;
+      }
+
+      toastSuccess("Signed out", "You have been logged out successfully.");
+      router.push("/");
+      router.refresh();
+    } catch {
+      toastError("Sign out failed", "Please try again in a moment.");
+    }
   }
 
   return (

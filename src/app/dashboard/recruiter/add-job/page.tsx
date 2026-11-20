@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ChevronRight } from "lucide-react";
 
@@ -38,13 +39,16 @@ import {
   type SalaryFrequency,
 } from "@/lib/job";
 import postJob from "@/lib/action/jobs";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 const inputClassName = "h-10";
 const selectTriggerClassName = "h-10 w-full";
 
 export default function PostJob() {
+  const router = useRouter();
   const [jobType, setJobType] = useState<JobType>("Full-time");
   const [isRemote, setIsRemote] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,16 +72,30 @@ export default function PostJob() {
       requirements: value("requirements"),
     };
 
-    const result = await postJob(job) 
+    try {
+      setIsSubmitting(true);
 
-    console.log(result)
+      await postJob(job);
 
-    // console.log("Job form data:", job);
-    // toastSuccess("Job published", `${job.title} has been submitted.`);
+      toastSuccess(
+        "Job published",
+        `${job.title} has been added to your job listings.`
+      );
 
-    // form.reset();
-    // setJobType("Full-time");
-    // setIsRemote(false);
+      form.reset();
+      setJobType("Full-time");
+      setIsRemote(false);
+      router.refresh();
+    } catch (error) {
+      toastError(
+        "Failed to publish job",
+        error instanceof Error && error.message
+          ? error.message
+          : "Please try again in a moment."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -350,9 +368,10 @@ export default function PostJob() {
         <Button
           type="submit"
           form="post-job-form"
+          disabled={isSubmitting}
           className="h-10 shrink-0 bg-[#5c53fe] px-4 text-white hover:bg-[#6f67ff]"
         >
-          Publish Job
+          {isSubmitting ? "Publishing..." : "Publish Job"}
         </Button>
         </section>
       </form>

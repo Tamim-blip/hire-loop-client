@@ -13,3 +13,15 @@ export async function getData(): Promise<ApiJob[]> {
 
   return res.json();
 }
+
+
+export async function getOneJob(jobId : string) {
+
+  const res = await fetch(`${BASE_URL}/jobs/${jobId}`, {cache : "no-store"})
+
+  if (!res.ok) {
+    throw new Error("Failed to load single job");
+  }
+  return res.json()
+
+}

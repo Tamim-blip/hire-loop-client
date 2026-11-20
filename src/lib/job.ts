@@ -33,6 +33,7 @@ export type SalaryFrequency = (typeof SALARY_FREQUENCIES)[number];
 
 /** The exact payload collected by the job post form. */
 export type JobFormData = {
+  
   title: string;
   company: string;
   category: string;
@@ -49,16 +50,18 @@ export type JobFormData = {
 
 
 export type TJob = {
-  title: string;
-  company: string;
-  category: string;
-  jobType: JobType;
-  isRemote: boolean;
-  location: string;
-  deadline: string;
-  minSalary: string;
-  maxSalary: string;
-  frequency: SalaryFrequency;
-  responsibilities: string;
-  requirements: string;
+  
+  _id: string
+  title: string
+  company: string
+  category: string
+  jobType: string
+  isRemote: boolean
+  location: string
+  deadline: string
+  minSalary: string
+  maxSalary: string
+  frequency: string
+  responsibilities: string
+  requirements: string
 };

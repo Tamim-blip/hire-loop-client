@@ -19,3 +19,40 @@ export default async function postJob(data: JobFormData) {
 
     return res.json()
 }
+
+
+ export const deleteJob = async (_id : string) => {
+
+    const res = await fetch(`${BASE_URL}/jobs/${_id}`,{
+        method : "DELETE"
+    })
+
+    if (!res.ok) {
+        throw new Error("Failed to delete job")
+    }
+
+    return res.json()
+
+ }
+
+
+
+ export async function updateJob (data : JobFormData, id : string) {
+
+     const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+
+    if (!res.ok) {
+        throw new Error("Failed to publish job")
+    }
+
+    return res.json()
+
+
+
+ }
