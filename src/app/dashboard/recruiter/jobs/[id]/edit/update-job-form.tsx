@@ -74,6 +74,9 @@ export function UpdateJobForm({ jobId, job }: UpdateJobFormProps) {
       frequency: value("frequency") as SalaryFrequency,
       responsibilities: value("responsibilities"),
       requirements: value("requirements"),
+      applicants: job.applicants ?? 0,
+      status: job.status ?? "Active",
+      postedLabel: job.postedLabel ?? "Posted recently",
     };
 
 

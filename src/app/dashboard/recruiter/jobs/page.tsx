@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { format, isPast, isValid, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import {
   Briefcase,
   Building2,
@@ -22,17 +22,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getData } from "@/lib/api/jobs";
-import { type JobFormData, type SalaryFrequency } from "@/lib/job";
+import {
+  type JobStatus,
+  type ManagedJob,
+  type SalaryFrequency,
+} from "@/lib/job";
 import { JobActions } from "./_component/manageJobAction";
-
-type JobStatus = "Active" | "Expired";
-
-export type ManagedJob = JobFormData & {
-  id: string;
-  applicants: number;
-  status: JobStatus;
-  postedLabel: string;
-};
 
 const FREQUENCY_SUFFIX: Record<SalaryFrequency, string> = {
   "per hour": "hr",
@@ -120,17 +115,13 @@ export default function ManageJobs() {
 async function JobsContent() {
   const apiJobs = await getData();
 
-  const jobs: ManagedJob[] = apiJobs.map((job) => {
-    const expired = isPast(parseISO(job.deadline));
-
-    return {
-      ...job,
-      id: job._id,
-      applicants: 0,
-      status: expired ? "Expired" : "Active",
-      postedLabel: expired ? "Closed" : "Posted recently",
-    };
-  });
+  const jobs: ManagedJob[] = apiJobs.map((job) => ({
+    ...job,
+    id: job._id,
+    applicants: job.applicants ?? 0,
+    status: job.status ?? "Active",
+    postedLabel: job.postedLabel ?? "Posted recently",
+  }));
 
   if (jobs.length === 0) {
     return (

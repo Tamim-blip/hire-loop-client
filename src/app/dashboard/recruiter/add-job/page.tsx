@@ -70,6 +70,9 @@ export default function PostJob() {
       frequency: value("frequency") as SalaryFrequency,
       responsibilities: value("responsibilities"),
       requirements: value("requirements"),
+      applicants: 0,
+      status: "Active",
+      postedLabel: "Posted recently",
     };
 
     try {
@@ -86,6 +89,7 @@ export default function PostJob() {
       setJobType("Full-time");
       setIsRemote(false);
       router.refresh();
+      router.push('/dashboard/recruiter/jobs')
     } catch (error) {
       toastError(
         "Failed to publish job",

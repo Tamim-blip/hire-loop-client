@@ -31,6 +31,8 @@ export const SALARY_FREQUENCIES = [
 
 export type SalaryFrequency = (typeof SALARY_FREQUENCIES)[number];
 
+export type JobStatus = "Active" | "Expired";
+
 /** The exact payload collected by the job post form. */
 export type JobFormData = {
   
@@ -46,22 +48,19 @@ export type JobFormData = {
   frequency: SalaryFrequency;
   responsibilities: string;
   requirements: string;
+  applicants: number;
+  status: JobStatus;
+  postedLabel: string;
+
 };
 
 
-export type TJob = {
-  
-  _id: string
-  title: string
-  company: string
-  category: string
-  jobType: string
-  isRemote: boolean
-  location: string
-  deadline: string
-  minSalary: string
-  maxSalary: string
-  frequency: string
-  responsibilities: string
-  requirements: string
+/** A job document as returned by the API. */
+export type ApiJob = JobFormData & {
+  _id: string;
+};
+
+/** A job prepared for the Manage Jobs page. */
+export type ManagedJob = JobFormData & {
+  id: string;
 };

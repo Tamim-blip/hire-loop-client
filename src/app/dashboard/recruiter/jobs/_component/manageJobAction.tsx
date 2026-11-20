@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-import { ManagedJob } from "../page";
+import type { ManagedJob } from "@/lib/job";
 
 import { Trash2Icon } from "lucide-react"
 import {
