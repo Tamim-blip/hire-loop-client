@@ -64,3 +64,12 @@ export type ApiJob = JobFormData & {
 export type ManagedJob = JobFormData & {
   id: string;
 };
+
+/** Values used by the Browse Jobs search and filter form. */
+export type BrowseJobsFilters = {
+  search: string;
+  jobType: JobType | "";
+  category: string;
+  location: string;
+  isRemote: boolean;
+};
