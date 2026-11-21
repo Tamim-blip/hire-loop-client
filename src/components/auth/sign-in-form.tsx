@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,9 @@ export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') ?? "/"
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -52,6 +55,7 @@ export function SignInForm() {
     const { data, error } = await signIn.email({
       email: formData.get("email") as string,
       password: formData.get("password") as string,
+      callbackURL : redirectTo
     });
 
     if (error) {
