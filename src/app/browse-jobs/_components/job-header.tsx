@@ -2,11 +2,13 @@
 
 import { postApplication } from '@/lib/action/jobs';
 import { getApplicationsCount } from '@/lib/api/application';
+import { getPremiumUser } from '@/lib/api/users';
 import { useSession } from '@/lib/auth-client';
 import { ApiJob } from '@/lib/job';
 import { toastError, toastSuccess } from '@/lib/toast';
 import { ArrowUpRight, Bookmark, BriefcaseBusiness, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
 
 
 const JobHeader = ({data} : {data : ApiJob}) => {
@@ -39,8 +41,10 @@ const JobHeader = ({data} : {data : ApiJob}) => {
 
         try {
             const applicationcount = await getApplicationsCount(`userId=${user.id}`)
+            const premiumUser = await getPremiumUser(user.id)
+            console.log(premiumUser)
 
-            if(applicationcount.count > 10){
+            if( !premiumUser.premium && applicationcount.count > 10){
               toastError(
                 "Application limit reached",
                 "You've reached the free application limit. Upgrade to keep applying."

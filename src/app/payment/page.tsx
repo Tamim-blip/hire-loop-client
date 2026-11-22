@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowRight, LockKeyhole } from "lucide-react";
 import {
   ArrowLeft,
   BadgeCheck,
   Check,
   CreditCard,
-  LockKeyhole,
+ 
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -32,7 +33,15 @@ const PLAN = {
 
 const price = `$${PLAN.price.toFixed(2)}`;
 
-const PaymentPage = () => {
+const PaymentPage = async({searchParams} : {searchParams : Promise <{canceled ? : string}>}) => {
+
+     const { canceled } = await searchParams
+
+  if (canceled) {
+    console.log(
+      'Order canceled -- continue to shop around and check out when you\'re ready.'
+    )
+  }
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#09090b] px-4 py-8 text-white sm:px-6 lg:px-8">
       {/* Background glow */}
@@ -144,7 +153,29 @@ const PaymentPage = () => {
             </div>
 
             <div className="mt-5">
-              <PayButton amount={price} />
+
+
+            
+
+              <form action="/api/checkout_sessions" method="POST">
+      <section>
+        
+           <button
+      type="submit" role="link"
+      
+      className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
+    >
+     
+          <LockKeyhole className="size-4" />
+          Pay {price}
+          <ArrowRight className="size-4" />
+    </button>
+       
+      </section>
+    </form>
+
+
+
             </div>
 
             <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-zinc-500">
