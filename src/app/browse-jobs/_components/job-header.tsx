@@ -4,8 +4,9 @@ import { postApplication } from '@/lib/action/jobs';
 import { getApplicationsCount } from '@/lib/api/application';
 import { useSession } from '@/lib/auth-client';
 import { ApiJob } from '@/lib/job';
+import { toastError, toastSuccess } from '@/lib/toast';
 import { ArrowUpRight, Bookmark, BriefcaseBusiness, CheckCircle2 } from 'lucide-react';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 
 const JobHeader = ({data} : {data : ApiJob}) => {
@@ -20,24 +21,39 @@ const JobHeader = ({data} : {data : ApiJob}) => {
     const HandleApply =  async() => {
 
         if(!session?.user){
+            toastError(
+              "Sign in required",
+              "Please sign in to apply for this job."
+            )
             router.push(`/sign-in?redirectTo=/browse-jobs/${data._id}`)
             return
-        }else if(user?.role === "seeker"){
+        }
 
+        if(user?.role !== "seeker"){
+            toastError(
+              "Only seekers can apply",
+              "Sign in with a seeker account to apply for this job."
+            )
+            return
+        }
 
-           const applicationcount = await getApplicationsCount(`userId=${user.id}`)
+        try {
+            const applicationcount = await getApplicationsCount(`userId=${user.id}`)
 
-
-           if(applicationcount.count > 10){
-            redirect('/payment')
-
-           }
+            if(applicationcount.count > 10){
+              toastError(
+                "Application limit reached",
+                "You've reached the free application limit. Upgrade to keep applying."
+              )
+              router.push('/payment')
+              return
+            }
 
             const application = {
                 jobId : data._id,
-                userId : user?.id,
-                email : user?.email,
-                name : user?.name,
+                userId : user.id,
+                email : user.email,
+                name : user.name,
                 jobTitle  : data.title,
                 jobType : data.jobType,
                 deadline : data.deadline,
@@ -46,16 +62,29 @@ const JobHeader = ({data} : {data : ApiJob}) => {
 
             }
 
-
             const result = await postApplication(application)
 
             if(result.acknowledged){
-              redirect('/browse-jobs')
+              toastSuccess(
+                "Application submitted",
+                `Your application for ${data.title} has been sent.`
+              )
+              router.push('/browse-jobs')
+              return
             }
-        }else(console.log("only seeker can aply"))
 
-
-
+            toastError(
+              "Application not submitted",
+              "We couldn't submit your application. Please try again."
+            )
+        } catch (error) {
+            toastError(
+              "Failed to apply",
+              error instanceof Error && error.message
+                ? error.message
+                : "Please try again in a moment."
+            )
+        }
 
     }
     return (

@@ -1,6 +1,6 @@
 "use server"
 
-import type { JobFormData } from "@/lib/job"
+import type { ApplicationFormData, JobFormData } from "@/lib/job"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -59,7 +59,7 @@ export default async function postJob(data: JobFormData) {
 
 
 
- export async function postApplication (data) {
+ export async function postApplication (data: ApplicationFormData) {
 
     const res = await fetch(`${BASE_URL}/applications`, {
         method : "POST",
@@ -68,6 +68,10 @@ export default async function postJob(data: JobFormData) {
         },
         body : JSON.stringify(data)
     })
+
+    if (!res.ok) {
+        throw new Error("Failed to submit application")
+    }
 
     return res.json()
  }

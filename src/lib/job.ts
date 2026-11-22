@@ -55,6 +55,19 @@ export type JobFormData = {
 };
 
 
+/** The exact payload sent when a seeker applies for a job. */
+export type ApplicationFormData = {
+  jobId: string;
+  userId: string;
+  email: string;
+  name: string;
+  jobTitle: string;
+  jobType: JobType;
+  deadline: string;
+  companiName: string;
+  isRemote: boolean;
+};
+
 /** A job document as returned by the API. */
 export type ApiJob = JobFormData & {
   _id: string;
