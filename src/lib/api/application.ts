@@ -8,3 +8,13 @@ export async function getApplications (query = "") {
     return res.json()
 
 }
+
+
+
+export async function getApplicationsCount (query = "") {
+
+    const res = await fetch(`${BASE_URL}/applications/count?${query}`)
+
+    return res.json()
+
+}

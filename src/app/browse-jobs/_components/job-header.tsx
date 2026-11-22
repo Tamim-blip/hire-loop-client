@@ -1,10 +1,11 @@
 'use client'
 
 import { postApplication } from '@/lib/action/jobs';
+import { getApplicationsCount } from '@/lib/api/application';
 import { useSession } from '@/lib/auth-client';
 import { ApiJob } from '@/lib/job';
 import { ArrowUpRight, Bookmark, BriefcaseBusiness, CheckCircle2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 
 
 const JobHeader = ({data} : {data : ApiJob}) => {
@@ -13,6 +14,8 @@ const JobHeader = ({data} : {data : ApiJob}) => {
     const {data : session} = useSession()
     const user = session?.user
 
+   
+
 
     const HandleApply =  async() => {
 
@@ -20,6 +23,15 @@ const JobHeader = ({data} : {data : ApiJob}) => {
             router.push(`/sign-in?redirectTo=/browse-jobs/${data._id}`)
             return
         }else if(user?.role === "seeker"){
+
+
+           const applicationcount = await getApplicationsCount(`userId=${user.id}`)
+
+
+           if(applicationcount.count > 10){
+            redirect('/payment')
+
+           }
 
             const application = {
                 jobId : data._id,
@@ -37,7 +49,9 @@ const JobHeader = ({data} : {data : ApiJob}) => {
 
             const result = await postApplication(application)
 
-            console.log(result)
+            if(result.acknowledged){
+              redirect('/browse-jobs')
+            }
         }else(console.log("only seeker can aply"))
 
 
