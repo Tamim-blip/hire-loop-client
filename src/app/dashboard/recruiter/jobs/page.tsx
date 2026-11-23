@@ -21,13 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getJobs } from "@/lib/api/jobs";
+import { getJobs, getRecruiterJob } from "@/lib/api/jobs";
 import {
   type JobStatus,
   type ManagedJob,
   type SalaryFrequency,
 } from "@/lib/job";
 import { JobActions } from "./_component/manageJobAction";
+import { getSession } from "@/lib/core/server";
 
 const FREQUENCY_SUFFIX: Record<SalaryFrequency, string> = {
   "per hour": "hr",
@@ -113,7 +114,9 @@ export default function ManageJobs() {
 }
 
 async function JobsContent() {
-  const apiJobs = await getJobs();
+
+  const session = await getSession()
+  const apiJobs = await getRecruiterJob(`recruiterId=${session?.user?.id}`);
 
   const jobs: ManagedJob[] = apiJobs.map((job) => ({
     ...job,

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ChevronRight } from "lucide-react";
 
@@ -40,6 +40,9 @@ import {
 } from "@/lib/job";
 import postJob from "@/lib/action/jobs";
 import { toastError, toastSuccess } from "@/lib/toast";
+import { useSession } from "@/lib/auth-client";
+import { getRecruiterJobCount } from "@/lib/api/jobs";
+import { getPremiumUser } from "@/lib/api/users";
 
 const inputClassName = "h-10";
 const selectTriggerClassName = "h-10 w-full";
@@ -50,14 +53,20 @@ export default function PostJob() {
   const [isRemote, setIsRemote] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const {data : session } =  useSession()
+
+  const user = session?.user
+
    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+    event.preventDefault()
+
 
     const form = event.currentTarget;
     const formData = new FormData(form);
     const value = (name: string) => String(formData.get(name) ?? "");
 
     const job: JobFormData = {
+      recruiterId: user?.id ?? "",
       title: value("title"),
       company: value("company"),
       category: value("category"),
@@ -77,6 +86,14 @@ export default function PostJob() {
 
     try {
       setIsSubmitting(true);
+      const premiumUser = await getPremiumUser(user?.id ?? "")
+
+      const jobCount = await getRecruiterJobCount(`recruiterId=${user?.id}`)
+
+      if( !premiumUser.premium  && jobCount.count > 5){
+        router.push('/payment')
+        return
+      }
 
       await postJob(job);
 

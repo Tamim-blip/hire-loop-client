@@ -28,3 +28,32 @@ export async function paymentVerify(sessionId: string) {
 
   return data;
 }
+
+
+export async function recruiterPaymentVerify(sessionId: string) {
+  if (!BASE_URL) {
+    throw new Error("API base URL is not configured");
+  }
+
+  const res = await fetch(
+    `${BASE_URL}/payment/recruiter-checkout-verify`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sessionId }),
+      cache: "no-store",
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error(
+      data.message || "Payment verification failed"
+    );
+  }
+
+  return data;
+}

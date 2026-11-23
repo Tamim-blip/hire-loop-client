@@ -35,7 +35,8 @@ export type JobStatus = "Active" | "Expired";
 
 /** The exact payload collected by the job post form. */
 export type JobFormData = {
-  
+
+  recruiterId : string,
   title: string;
   company: string;
   category: string;
