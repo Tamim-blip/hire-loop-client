@@ -34,7 +34,6 @@ import { useRouter } from "next/navigation";
   const HandleDelete = async () => {
     try {
       setIsDeleting(true)
-
       const res = await deleteJob(job.id)
 
       if (res?.deletedCount > 0) {
@@ -75,9 +74,11 @@ import { useRouter } from "next/navigation";
       <Button
         variant="ghost"
         size="icon-sm"
-        type="button"
         title="View applicants"
         aria-label={`View applicants for ${job.title}`}
+        render={
+          <Link href={`/dashboard/recruiter/jobs/${job.id}/application`} />
+        }
       >
         <Eye />
       </Button>
